@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Dan-Accuracy-Calculator:jar">
+    <output-path>$PROJECT_DIR$/</output-path>
+    <root id="archive" name="Dan-Accuracy-Calculator.jar">
+      <element id="module-output" name="Dan-Accuracy-Calculator" />
+    </root>
+  </artifact>
+</component>

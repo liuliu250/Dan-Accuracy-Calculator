@@ -18,7 +18,7 @@ public class Window implements ActionListener, ItemListener {
     //草拟吗java为什么不能在接口重写的位置调用构造函数的对象，，
     //导致一气之下所有初始化全放这里了
     JPanel panel = new JPanel();
-    JFrame window = new JFrame("Dan Acc Calculator 2.0");
+    JFrame window = new JFrame("Dan Acc Calculator 2.1");
     JButton calculate = new JButton("Calculate");
 //    JButton revCal = new JButton("Reverse Calculate");
     JLabel[] text = new JLabel[TextBounds.length];
