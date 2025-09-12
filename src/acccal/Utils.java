@@ -70,19 +70,13 @@ public class Utils {
 
     //JLabel重绘 他妈的acc重绘和物量重绘不能通用qswl
     public static void labelRepaint(JLabel[] label, float[] str) {
-        for (int i = 0; i < label.length; i++) {
-            label[i].setText(String.format("%.4f", str[i]));
-        }
+        for (int i = 0; i < label.length; i++) label[i].setText(String.format("%.4f", str[i]));
     }
     public static void labelRepaint(JLabel[] label, int[] str) {
-        for (int i = 0; i < label.length; i++) {
-            label[i].setText(String.valueOf(str[i]));
-        }
+        for (int i = 0; i < label.length; i++) label[i].setText(String.valueOf(str[i]));
     }
     public static void labelRepaint(JLabel[] label, String[] str) {
-        for (int i = 0; i < label.length; i++) {
-            label[i].setText(str[i]);
-        }
+        for (int i = 0; i < label.length; i++) label[i].setText(str[i]);
     }
     public static float[] getAccFromJT(JTextField[] tf) {
         float[] acc = new float[tf.length];

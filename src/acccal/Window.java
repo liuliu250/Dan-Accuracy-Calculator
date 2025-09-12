@@ -18,7 +18,7 @@ public class Window implements ActionListener, ItemListener {
     //草拟吗java为什么不能在接口重写的位置调用构造函数的对象，，
     //导致一气之下所有初始化全放这里了
     JPanel panel = new JPanel();
-    JFrame window = new JFrame("Dan Acc Calculator 2.1");
+    JFrame window = new JFrame("Dan Acc Calculator 2.2");
     JButton calculate = new JButton("Calculate");
 //    JButton revCal = new JButton("Reverse Calculate");
     JLabel[] text = new JLabel[TextBounds.length];
@@ -45,6 +45,7 @@ public class Window implements ActionListener, ItemListener {
         calculate.setBackground(new Color(33, 173, 75));
 
         //数学工作做好了，但java这边没想好怎么实现
+        //想好了这下 v2.1
 //        revCal.setBounds(WindowSize[0]-160, 65, 100, 40);
 //        revCal.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
 //        revCal.setBackground(new Color(33, 173, 75));
@@ -97,6 +98,9 @@ public class Window implements ActionListener, ItemListener {
         //统统添加到面板
         add(panel, calculate, DanChooser);
         add(panel, text, chkBox, AccArea);
+        for (int i = 19; i < 23; i++) {
+            panel.remove(text[i]);
+        }
         //最后设置可见，避免重绘且减少卡顿
         window.setVisible(true);
 
@@ -105,6 +109,7 @@ public class Window implements ActionListener, ItemListener {
     public static void main(String[] args) {new Window();}
 
     //还没写完 别急
+    //这下写完了 v2.1
     @Override
     public void itemStateChanged(ItemEvent e) {
         int indexDan = 0;
@@ -118,7 +123,6 @@ public class Window implements ActionListener, ItemListener {
 //        System.out.print(indexDan+"; "+indexSong+";;");
         DanChooser.removeAllItems();
         boxRepaint(DanChooser, CbBoxText[indexDan]);
-        labelRepaint(Arrays.copyOfRange(text, 11, 15), volume[indexDan][indexSong]);
         if(e.getSource() == chkBox[2]){
             panel.setVisible(false);
             if(chkBox[2].isSelected()){
@@ -146,7 +150,7 @@ public class Window implements ActionListener, ItemListener {
 //            System.out.println(Arrays.toString(getAccFromJT(AccArea)));
             labelRepaint(Arrays.copyOfRange(text, 15, 19), reverseCalculate(getAccFromJT(AccArea), volume[indexDan][indexSong]));
         }else {
-            float[] AccFinal = calculate(getAccFromJT(AccArea), volume[indexDan][indexSong]);
+            String[] AccFinal = calculate(getAccFromJT(AccArea), volume[indexDan][indexSong]);
             labelRepaint(Arrays.copyOfRange(text, 15, 19), AccFinal);
         }
     }

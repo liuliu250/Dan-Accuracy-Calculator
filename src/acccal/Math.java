@@ -6,11 +6,11 @@ public class Math {
 
     //计算单曲acc
     //之前写了矩阵生成，写了高斯消元，时间复杂度拉爆了
-    public static float[] calculate(float[] compAcc, int[] volume) {
+    public static String[] calculate(float[] compAcc, int[] volume) {
 
         int sumVolume = Arrays.stream(volume).sum();
         float[] currAcc = new float[volume.length];
-        float[] calcAcc = new float[volume.length];
+        String[] calcAcc = new String[volume.length];
         float[] weight =  new float[volume.length];
         for (int i = 0; i < volume.length; i++) {
             for (int j = i; j < volume.length; j++) {
@@ -19,13 +19,16 @@ public class Math {
         }
 //        System.out.println(Arrays.toString(weight)); //debug
 
-        calcAcc[0] = compAcc[0];
-        currAcc[0] = calcAcc[0] * weight[0];
+        calcAcc[0] = String.format("%.4f", compAcc[0]);
+        currAcc[0] = compAcc[0] * weight[0];
 //        System.out.println(calcAcc[0]+";"+currAcc[0]);
         for (int i = 1; i < volume.length; i++) {
 //            确实不好写，下标老是乱飞（气）
             currAcc[i] = compAcc[i] * weight[i];
-            calcAcc[i] = (currAcc[i] - currAcc[i-1]) / (weight[i] -  weight[i-1]);
+            calcAcc[i] = String.format("%.4f", (currAcc[i] - currAcc[i-1]) / (weight[i] -  weight[i-1]));
+            if (Float.parseFloat(calcAcc[i]) > 100 || Float.parseFloat(calcAcc[i]) < 0) {
+                calcAcc[i] = "数据有误！";
+            }
 //            System.out.println(currAcc[i]);
 //            System.out.println(currAcc[i] -  currAcc[i-1]);
 //            System.out.println(calcAcc[i] + "\n");
@@ -34,15 +37,19 @@ public class Math {
         return calcAcc;
     }
 
-    public static float[] reverseCalculate(float[] currAcc, int[] volume) {
+    public static String[] reverseCalculate(float[] currAcc, int[] volume) {
 
-        float[] calcAcc = new float[volume.length];
+        String[] calcAcc = new String[volume.length];
         float stdSum = Arrays.stream(volume).sum() * 96;//过段标准为96acc（默认）
         float curSum = innerProduct(currAcc, volume);
 //        System.out.println(stdSum+";"+curSum);
         for (int i = 0; i < volume.length; i++) {
-            calcAcc[i] = currAcc[i] + (stdSum - curSum) / volume[i];
-//            System.out.print(calcAcc[i] + " ");
+            if(currAcc[i] + (stdSum - curSum) / volume[i] <= 100){
+                calcAcc[i] = String.format("%.4f", currAcc[i] + (stdSum - curSum) / volume[i]);
+//              System.out.print(calcAcc[i] + " ");
+            } else {
+                calcAcc[i] = "过不了喵";
+            }
         }
         return calcAcc;
     }
