@@ -1,4 +1,4 @@
-package com.lutils.com.acccal;
+package acccal;
 
 import javax.swing.*;
 import java.awt.*;
