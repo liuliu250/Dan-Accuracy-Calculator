@@ -37,19 +37,18 @@ public class Math {
         return calcAcc;
     }
 
-    public static String[] reverseCalculate(float[] currAcc, int[] volume) {
-
+    public static String[] reverseCalculate(float[] currAcc, int[] volume, float std) {
+        if (std == 0) std = 96;
+        float temp = 0;
         String[] calcAcc = new String[volume.length];
-        float stdSum = Arrays.stream(volume).sum() * 96;//过段标准为96acc（默认）
+        float stdSum = Arrays.stream(volume).sum() * std;//过段标准为96acc（默认）
         float curSum = innerProduct(currAcc, volume);
 //        System.out.println(stdSum+";"+curSum);
         for (int i = 0; i < volume.length; i++) {
-            if(currAcc[i] + (stdSum - curSum) / volume[i] <= 100){
-                calcAcc[i] = String.format("%.4f", currAcc[i] + (stdSum - curSum) / volume[i]);
-//              System.out.print(calcAcc[i] + " ");
-            } else {
-                calcAcc[i] = "过不了喵";
-            }
+            temp = currAcc[i] + (stdSum - curSum) / volume[i];
+            if(temp <= 100 && temp > currAcc[i]) calcAcc[i] = String.format("%.4f", temp);
+            else if (temp > 100) calcAcc[i] = "过不了喵";
+            else calcAcc[i] = "过了喵";
         }
         return calcAcc;
     }
@@ -62,6 +61,7 @@ public class Math {
         return result;
     }
     //好像也没啥用
+    //有用了这下-2.3
     public static float[] innerProduct(float[] a, float[] b) {
         float[] result = new float[a.length];
         for (int i = 0; i < a.length; i++) {

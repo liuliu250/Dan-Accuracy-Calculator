@@ -78,6 +78,10 @@ public class Utils {
     public static void labelRepaint(JLabel[] label, String[] str) {
         for (int i = 0; i < label.length; i++) label[i].setText(str[i]);
     }
+    public static float getAccFromJT(JTextField tf) {
+        if (tf.getText().isEmpty()) return 0;
+        else return Float.parseFloat(tf.getText());
+    }
     public static float[] getAccFromJT(JTextField[] tf) {
         float[] acc = new float[tf.length];
         for (int i = 0; i < tf.length; i++) {

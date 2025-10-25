@@ -8,8 +8,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Arrays;
 
-import static acccal.Math.calculate;
-import static acccal.Math.reverseCalculate;
+import static acccal.Math.*;
 import static acccal.Reference.*;
 import static acccal.Utils.*;
 
@@ -18,12 +17,13 @@ public class Window implements ActionListener, ItemListener {
     //草拟吗java为什么不能在接口重写的位置调用构造函数的对象，，
     //导致一气之下所有初始化全放这里了
     JPanel panel = new JPanel();
-    JFrame window = new JFrame("Dan Acc Calculator 2.2");
+    JFrame window = new JFrame("Dan Acc Calculator 2.3");
     JButton calculate = new JButton("Calculate");
 //    JButton revCal = new JButton("Reverse Calculate");
     JLabel[] text = new JLabel[TextBounds.length];
-    JCheckBox[] chkBox = new JCheckBox[3];
-    JTextField[] AccArea = new JTextField[4];
+    JCheckBox[] chkBox = new JCheckBox[ChkBoxBounds.length];
+    JTextField[] AccArea = new JTextField[AccAreaBounds.length];
+    JTextField stdArea = new JTextField();
     JComboBox<String> DanChooser = new JComboBox<>();
 
     public Window() {
@@ -78,6 +78,7 @@ public class Window implements ActionListener, ItemListener {
             AccArea[i] = new JTextField();
         }
         setBounds(AccAreaBounds, AccArea);
+        stdArea.setBounds(605, 198, 80, 30);
 
         //添加监听（cnm的java 为什么JComboBox的getIndex老是返回-1越界）
         calculate.addActionListener(this);
@@ -96,7 +97,7 @@ public class Window implements ActionListener, ItemListener {
         });
 
         //统统添加到面板
-        add(panel, calculate, DanChooser);
+        add(panel, calculate, DanChooser, stdArea);
         add(panel, text, chkBox, AccArea);
         for (int i = 19; i < 23; i++) {
             panel.remove(text[i]);
@@ -148,10 +149,16 @@ public class Window implements ActionListener, ItemListener {
         }
         if(chkBox[2].isSelected()){
 //            System.out.println(Arrays.toString(getAccFromJT(AccArea)));
-            labelRepaint(Arrays.copyOfRange(text, 15, 19), reverseCalculate(getAccFromJT(AccArea), volume[indexDan][indexSong]));
-        }else {
-            String[] AccFinal = calculate(getAccFromJT(AccArea), volume[indexDan][indexSong]);
-            labelRepaint(Arrays.copyOfRange(text, 15, 19), AccFinal);
+            labelRepaint(Arrays.copyOfRange(text, 15, 19),
+                reverseCalculate(getAccFromJT(AccArea), volume[indexDan][indexSong],
+                getAccFromJT(stdArea))
+            );
+            text[26].setText(String.valueOf(innerProduct(getAccFromJT(AccArea),
+                volume[indexDan][indexSong]) / Arrays.stream(volume[indexDan][indexSong]).sum())
+            );
+        } else {
+            labelRepaint(Arrays.copyOfRange(text, 15, 19), calculate(getAccFromJT(AccArea), volume[indexDan][indexSong]));
+
         }
     }
 }
