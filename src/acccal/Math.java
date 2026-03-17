@@ -38,8 +38,8 @@ public class Math {
     }
 
     public static String[] reverseCalculate(float[] currAcc, int[] volume, float std) {
-        if (std == 0) std = 96;
-        float temp = 0;
+        std = (std == 0) ? 96f : std;
+        float temp;
         String[] calcAcc = new String[volume.length];
         float stdSum = Arrays.stream(volume).sum() * std;//过段标准为96acc（默认）
         float curSum = innerProduct(currAcc, volume);

@@ -27,19 +27,32 @@ public class Window implements ActionListener, ItemListener {
     JComboBox<String> DanChooser = new JComboBox<>();
 
     public Window() {
+        initWindowFrame();
+        initPanel();
+        initButtons();
+        initLabels();
+        initDanChooser();
+        initCheckBoxes();
+        initInputAreas();
+        registerListeners();
+        assemblePanelComponents();
+        showWindow();
+    }
 
-        //窗口初始化
+    private void initWindowFrame() {
         setResolution(window, getResolution(), WindowSize);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
         //窗口图标（可选）
         window.setIconImage(getImage("src/acccal/images/icon.png"));
+    }
 
-        //JPanel初始化
+    private void initPanel() {
         panel.setLayout(null);
         window.add(panel);
+    }
 
-        //JButton初始化
+    private void initButtons() {
         calculate.setBounds(590, 25, 100, 40);
         calculate.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
         calculate.setBackground(new Color(33, 173, 75));
@@ -49,62 +62,92 @@ public class Window implements ActionListener, ItemListener {
 //        revCal.setBounds(WindowSize[0]-160, 65, 100, 40);
 //        revCal.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
 //        revCal.setBackground(new Color(33, 173, 75));
+    }
 
-        //文字初始化
+    private void initLabels() {
         for (int i = 0; i < TextBounds.length; i++) {
             text[i] = new JLabel(TextTips[i]);
             text[i].setFont(new Font("Microsoft YaHei", Font.PLAIN, 15));
         }
         setBounds(TextBounds, text);
-        for (int i = 11; i < 15; i++) {
-            text[i].setText(String.valueOf(volume[0][0][i-11]));
-        }
+        refreshVolumeLabels();
+    }
 
-        //JComboBox初始化
+    private void initDanChooser() {
         DanChooser.setBounds(144, 25, 90, 40);
         DanChooser.setFont(new Font("Microsoft YaHei", Font.PLAIN, 12));
-        boxRepaint(DanChooser, CbBoxText[0]);
+        refreshDanOptions();
         panel.repaint();
+    }
 
-        //复选框初始化
+    private void initCheckBoxes() {
         for (int i = 0; i < chkBox.length; i++) {
             chkBox[i] = new JCheckBox();
             chkBox[i].addItemListener(this);
         }
         setBounds(ChkBoxBounds, chkBox);
+    }
 
-        //文字框初始化
+    private void initInputAreas() {
         for (int i = 0; i < AccArea.length; i++) {
             AccArea[i] = new JTextField();
         }
         setBounds(AccAreaBounds, AccArea);
         stdArea.setBounds(605, 198, 80, 30);
+    }
 
-        //添加监听（cnm的java 为什么JComboBox的getIndex老是返回-1越界）
+    private void registerListeners() {
         calculate.addActionListener(this);
         DanChooser.addItemListener(e -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
-                int indexDan = 0;
-                int indexSong = DanChooser.getSelectedIndex();
-                if(chkBox[0].isSelected()){
-                    indexDan += 2;
-                }
-                if(chkBox[1].isSelected()){
-                    indexDan += 1;
-                }
-                labelRepaint(Arrays.copyOfRange(text, 11, 15), volume[indexDan][indexSong]);
+                refreshVolumeLabels();
             }
         });
+    }
 
-        //统统添加到面板
+    private void assemblePanelComponents() {
         add(panel, calculate, DanChooser, stdArea);
         add(panel, text, chkBox, AccArea);
         for (int i = 19; i < 23; i++) {
             panel.remove(text[i]);
         }
+    }
+
+    private void showWindow() {
         //最后设置可见，避免重绘且减少卡顿
         window.setVisible(true);
+    }
 
+    private int getDanIndex() {
+        int indexDan = 0;
+        if (chkBox[0].isSelected()) {
+            indexDan += 2;
+        }
+        if (chkBox[1].isSelected()) {
+            indexDan += 1;
+        }
+        return indexDan;
+    }
+
+    private void refreshDanOptions() {
+        DanChooser.removeAllItems();
+        boxRepaint(DanChooser, CbBoxText[getDanIndex()]);
+    }
+
+    private void refreshVolumeLabels() {
+        int indexSong = DanChooser.getSelectedIndex();
+        if (indexSong < 0) {
+            indexSong = 0;
+        }
+        labelRepaint(Arrays.copyOfRange(text, 11, 15), volume[getDanIndex()][indexSong]);
+    }
+
+    private void updateReverseModeLayout() {
+        panel.setVisible(false);
+        text[3].setText(chkBox[2].isSelected() ? "目标acc" : "阶段acc");
+        labelRepaint(Arrays.copyOfRange(text, 15, 19), new String[]{"", "", "", ""});
+        reverseBounds(AccArea, Arrays.copyOfRange(text, 15, 19));
+        panel.setVisible(true);
     }
 
     public static void main(String[] args) {new Window();}
@@ -113,39 +156,18 @@ public class Window implements ActionListener, ItemListener {
     //这下写完了 v2.1
     @Override
     public void itemStateChanged(ItemEvent e) {
-        int indexDan = 0;
-        if(chkBox[0].isSelected()){
-            indexDan += 2;
-        }
-        if(chkBox[1].isSelected()){
-            indexDan += 1;
-        }
-        int indexSong = DanChooser.getSelectedIndex();
-//        System.out.print(indexDan+"; "+indexSong+";;");
-        DanChooser.removeAllItems();
-        boxRepaint(DanChooser, CbBoxText[indexDan]);
-        if(e.getSource() == chkBox[2]){
-            panel.setVisible(false);
-            if(chkBox[2].isSelected()){
-                text[3].setText("目标acc");
-            } else {
-                text[3].setText("阶段acc");
-            }
-            labelRepaint(Arrays.copyOfRange(text, 15, 19), new String[]{"", "", "", ""});
-            reverseBounds(AccArea, Arrays.copyOfRange(text, 15, 19));
-            panel.setVisible(true);
+        refreshDanOptions();
+        if (e.getSource() == chkBox[2]) {
+            updateReverseModeLayout();
         }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        int indexDan = 0;
+        int indexDan = getDanIndex();
         int indexSong = DanChooser.getSelectedIndex();
-        if(chkBox[0].isSelected()){
-            indexDan += 2;
-        }
-        if(chkBox[1].isSelected()){
-            indexDan += 1;
+        if (indexSong < 0) {
+            indexSong = 0;
         }
         if(chkBox[2].isSelected()){
 //            System.out.println(Arrays.toString(getAccFromJT(AccArea)));
@@ -157,7 +179,9 @@ public class Window implements ActionListener, ItemListener {
                 volume[indexDan][indexSong]) / Arrays.stream(volume[indexDan][indexSong]).sum())
             );
         } else {
-            labelRepaint(Arrays.copyOfRange(text, 15, 19), calculate(getAccFromJT(AccArea), volume[indexDan][indexSong]));
+            labelRepaint(Arrays.copyOfRange(text, 15, 19),
+                calculate(getAccFromJT(AccArea), volume[indexDan][indexSong])
+            );
 
         }
     }
