@@ -17,8 +17,9 @@ public class Window implements ActionListener, ItemListener {
     //草拟吗java为什么不能在接口重写的位置调用构造函数的对象，，
     //导致一气之下所有初始化全放这里了
     JPanel panel = new JPanel();
-    JFrame window = new JFrame("Dan Acc Calculator 2.3");
-    JButton calculate = new JButton("Calculate");
+    UiConfig config = UiConfig.load();
+    JFrame window = new JFrame();
+    JButton calculate = new JButton();
 //    JButton revCal = new JButton("Reverse Calculate");
     JLabel[] text = new JLabel[TextBounds.length];
     JCheckBox[] chkBox = new JCheckBox[ChkBoxBounds.length];
@@ -40,6 +41,7 @@ public class Window implements ActionListener, ItemListener {
     }
 
     private void initWindowFrame() {
+        window.setTitle(config.windowTitle);
         setResolution(window, getResolution(), WindowSize);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
@@ -53,8 +55,9 @@ public class Window implements ActionListener, ItemListener {
     }
 
     private void initButtons() {
+        calculate.setText(config.calculateButtonText);
         calculate.setBounds(590, 25, 100, 40);
-        calculate.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
+        calculate.setFont(config.calculateButtonFont);
         calculate.setBackground(new Color(33, 173, 75));
 
         //数学工作做好了，但java这边没想好怎么实现
@@ -67,7 +70,7 @@ public class Window implements ActionListener, ItemListener {
     private void initLabels() {
         for (int i = 0; i < TextBounds.length; i++) {
             text[i] = new JLabel(TextTips[i]);
-            text[i].setFont(new Font("Microsoft YaHei", Font.PLAIN, 15));
+            text[i].setFont(config.labelFont);
         }
         setBounds(TextBounds, text);
         refreshVolumeLabels();
@@ -75,7 +78,7 @@ public class Window implements ActionListener, ItemListener {
 
     private void initDanChooser() {
         DanChooser.setBounds(144, 25, 90, 40);
-        DanChooser.setFont(new Font("Microsoft YaHei", Font.PLAIN, 12));
+        DanChooser.setFont(config.danChooserFont);
         refreshDanOptions();
         panel.repaint();
     }
